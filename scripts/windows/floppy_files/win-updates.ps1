@@ -149,6 +149,12 @@ function Install-WindowsUpdates() {
         $global:RestartRequired=0
     }
 
+    if (3 -ge $InstallationResult.ResultCode) {
+        LogWrite "Installation result is failed. Checking OS image..."
+        Dism.exe /online /cleanup-image /restorehealth
+        SFC /scannow
+    }
+
     for($i=0; $i -lt $UpdatesToInstall.Count; $i++) {
         New-Object -TypeName PSObject -Property @{
             Title = $UpdatesToInstall.Item($i).Title
